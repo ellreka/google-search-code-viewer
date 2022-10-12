@@ -1,0 +1,22 @@
+{
+  "name": "google-search-code-viewer",
+  "version": "1.0.0",
+  "description": "",
+  "author": "ellreka",
+  "license": "MIT",
+  "scripts": {
+    "dev": "rimraf public/build && node esbuild.js --watch",
+    "build": "rimraf public/build && NODE_ENV=production node esbuild.js",
+    "fmt": "rome format ./src",
+    "fmt:write": "rome format ./src --write"
+  },
+  "devDependencies": {
+    "esbuild": "^0.15.10",
+    "rimraf": "^3.0.2",
+    "rome": "0.10.1-next",
+    "typescript": "^4.8.4"
+  },
+  "volta": {
+    "node": "16.17.1"
+  }
+}

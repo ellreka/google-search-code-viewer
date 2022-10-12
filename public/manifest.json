@@ -1,0 +1,19 @@
+{
+  "name": "Google Search Code Viewer",
+  "version": "1.0.0",
+  "description": "",
+  "background": {
+    "service_worker": "build/background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*.google.com/search*"],
+      "js": ["build/content.js"]
+    }
+  ],
+  "icons": {
+    "128": "icon-128.png"
+  },
+  "manifest_version": 3,
+  "permissions": ["tabs", "storage"]
+}
