@@ -1,0 +1,25 @@
+.gscv-wrapper {
+  overflow: auto;
+  width: 100%;
+}
+
+.gscv-container {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  max-width: calc(200px * 5 + 10px * 4);
+  width: auto;
+}
+
+.gscv-container pre {
+  box-sizing: border-box;
+  font-size: 13px;
+  width: calc((600px / 3) - 10px);
+  max-height: calc((600px / 3) - 10px);
+  flex-shrink: 1;
+  padding: 3px 5px;
+  margin: 0;
+  border-radius: 6px;
+  height: auto;
+  overflow-y: auto;
+}

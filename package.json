@@ -11,9 +11,12 @@
     "fmt:write": "rome format ./src --write"
   },
   "devDependencies": {
+    "@types/chrome": "^0.0.197",
+    "cheerio": "1.0.0-rc.12",
     "esbuild": "^0.15.10",
     "rimraf": "^3.0.2",
     "rome": "0.10.1-next",
+    "shiki": "^0.11.1",
     "typescript": "^4.8.4"
   },
   "volta": {

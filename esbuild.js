@@ -5,6 +5,7 @@ esbuild
     entryPoints: [
       "./src/background.ts",
       "./src/content.ts",
+      "./src/content.css",
     ],
     bundle: true,
     minify: true,
