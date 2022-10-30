@@ -3,6 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   '@types/chrome': ^0.0.197
   cheerio: 1.0.0-rc.12
+  dexie: ^3.2.2
   esbuild: ^0.15.10
   rimraf: ^3.0.2
   rome: 0.10.1-next
@@ -12,6 +13,7 @@ specifiers:
 devDependencies:
   '@types/chrome': 0.0.197
   cheerio: 1.0.0-rc.12
+  dexie: 3.2.2
   esbuild: 0.15.10
   rimraf: 3.0.2
   rome: 0.10.1-next
@@ -181,6 +183,11 @@ packages:
   /css-what/6.1.0:
     resolution: {integrity: sha512-HTUrgRJ7r4dsZKU6GjmpfRK1O76h97Z8MfS1G0FozR+oF2kG6Vfe8JE6zwrkbxigziPHinCJ+gCPjA9EaBDtRw==}
     engines: {node: '>= 6'}
+    dev: true
+
+  /dexie/3.2.2:
+    resolution: {integrity: sha512-q5dC3HPmir2DERlX+toCBbHQXW5MsyrFqPFcovkH9N2S/UW/H3H5AWAB6iEOExeraAu+j+zRDG+zg/D7YhH0qg==}
+    engines: {node: '>=6.0'}
     dev: true
 
   /dom-serializer/2.0.0:

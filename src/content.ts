@@ -1,13 +1,13 @@
 import * as shiki from "shiki";
-
-shiki.setCDN("https://unpkg.com/shiki/");
+import { MessageType } from "./types";
 
 const getPageUrls = () => {
   const pages = document.querySelectorAll(
     '#search .g .yuRUbf > a[href^="http"]:not(.fl):first-child'
   );
-  const urls = Array.from(pages).map((el) => el.getAttribute("href"));
-  console.log(urls);
+  const urls = Array.from(pages)
+    .map((el) => el.getAttribute("href"))
+    .filter(Boolean);
   return urls;
 };
 
@@ -20,45 +20,55 @@ const insertCodeButton = () => {
 };
 
 const displayCode = () => {
-  const urls = getPageUrls();
+  const urls = getPageUrls().slice(0, 10);
   urls.forEach((url) => {
     chrome.runtime.sendMessage(
       {
         url,
       },
-      (response) => {
-        console.log(response);
-      }
+      (response) => {}
     );
   });
 };
 
 const main = async () => {
   insertCodeButton();
+  displayCode();
 };
 
 main();
 
+shiki.setCDN("https://unpkg.com/shiki/");
+
 chrome.runtime.onMessage.addListener(
-  async (
-    message: {
-      url: string;
-      codes: string[];
-    },
-    sender,
-    sendResponse
-  ) => {
+  async (message: MessageType, sender, sendResponse) => {
     const { url, codes } = message;
+    const langs = [
+      ...new Set(
+        codes
+          .map((c) => c.lang)
+          .filter((lang): lang is string => typeof lang === "string")
+          .filter((lang) =>
+            shiki.BUNDLED_LANGUAGES.find(
+              (l) => l.id === lang || l.aliases?.includes(lang)
+            )
+          )
+      ),
+    ] as shiki.Lang[];
+
     const highlighter = await shiki.getHighlighter({
-      theme: "nord",
+      theme: "dracula",
+      langs,
     });
 
+    const bgColor = highlighter.getBackgroundColor();
     const codeHtmlList = codes.slice(0, 6).map((code) => {
-      const codeHtml = highlighter.codeToHtml(code, {
-        lang: "js",
+      const html = highlighter.codeToHtml(code.html, {
+        lang: code.lang,
       });
-      return codeHtml;
+      return html;
     });
+
     const pageTitleElement = document.querySelector(
       `.g a[href="${url}"]`
     )?.parentElement;
@@ -68,7 +78,15 @@ chrome.runtime.onMessage.addListener(
         "beforeend",
         `
         <div class="gscv-wrapper">
-          <div class="gscv-container">${codeHtmlList.join("")}</div>
+          <div class="gscv-container">${codeHtmlList
+            .map((code) => {
+              return `
+              <div class="gscv-code" style="background-color:${bgColor};">
+                ${code}
+              </div>
+              `;
+            })
+            .join("")}</div>
         </div>
         `
       );
