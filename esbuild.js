@@ -6,6 +6,7 @@ esbuild
       "./src/background.ts",
       "./src/content.ts",
       "./src/content.css",
+      "./src/options.tsx",
     ],
     bundle: true,
     minify: true,
@@ -13,7 +14,7 @@ esbuild
     sourcemap: process.env.NODE_ENV !== "production",
     outdir: "./public/build",
     define: {
-      "process.env.NODE_ENV": `"${process.env.NODE_ENV}"`
-    }
+      "process.env.NODE_ENV": `"${process.env.NODE_ENV}"`,
+    },
   })
   .catch(() => process.exit(1));

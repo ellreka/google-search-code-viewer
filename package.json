@@ -5,20 +5,30 @@
   "author": "ellreka",
   "license": "MIT",
   "scripts": {
-    "dev": "rimraf public/build && node esbuild.js --watch",
-    "build": "rimraf public/build && NODE_ENV=production node esbuild.js",
+    "dev": "concurrently \"rimraf public/build && node esbuild.js --watch\" \"pnpm run dev:css\"",
+    "build": "rimraf public/build && NODE_ENV=production node esbuild.js && pnpm run build:css",
+    "dev:css": "tailwindcss -i ./src/options.css -o ./public/build/options.css --watch",
+    "build:css": "tailwindcss -i ./src/options.css -o ./public/build/options.css --minify",
     "fmt": "rome format ./src",
     "fmt:write": "rome format ./src --write"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.197",
+    "@types/webextension-polyfill": "^0.9.1",
+    "autoprefixer": "^10.4.13",
     "cheerio": "1.0.0-rc.12",
+    "concurrently": "^7.5.0",
+    "daisyui": "^2.38.0",
     "dexie": "^3.2.2",
     "esbuild": "^0.15.10",
+    "postcss": "^8.4.18",
+    "preact": "^10.11.2",
     "rimraf": "^3.0.2",
     "rome": "0.10.1-next",
     "shiki": "^0.11.1",
-    "typescript": "^4.8.4"
+    "tailwindcss": "^3.2.1",
+    "typescript": "^4.8.4",
+    "webextension-polyfill": "^0.10.0"
   },
   "volta": {
     "node": "16.17.1"

@@ -1,6 +1,7 @@
 import { load } from "cheerio";
 import Dexie from "dexie";
 import { Code } from "./types";
+import browser from "webextension-polyfill";
 
 const db = new Dexie("google-search-code-viewer");
 
@@ -40,16 +41,31 @@ const fetchPage = async (url: string) => {
   }
 };
 
+const initializeStorage = async () => {
+  const config = await browser.storage.local.get();
+  if (config?.trigger == null) {
+    await browser.storage.local.set({ trigger: "always" });
+  }
+  if (config?.theme == null) {
+    await browser.storage.local.set({ theme: "nord" });
+  }
+};
+
+// Delete old cache periodically
 chrome.alarms.create("clearOldCache", {
   periodInMinutes: 60 * 24, // 1 day
 });
-
 chrome.alarms.onAlarm.addListener(async (alarm) => {
   if (alarm.name === "clearOldCache") {
     console.log("clearOldCache");
     await clearOldCache();
   }
 });
+
+// Initialize storage
+initializeStorage();
+
+cache.toArray().then((res) => console.log(res));
 
 chrome.runtime.onMessage.addListener(
   async (
@@ -63,7 +79,6 @@ chrome.runtime.onMessage.addListener(
       return;
     }
     sendResponse("background");
-    console.log(await cache.toArray());
     const { url } = message;
     let codeList = [];
     const cacheCodes = (await cache.get(url))?.codes;

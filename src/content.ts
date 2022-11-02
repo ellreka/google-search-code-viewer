@@ -1,5 +1,6 @@
 import * as shiki from "shiki";
 import { MessageType } from "./types";
+import browser from "webextension-polyfill";
 
 const getPageUrls = () => {
   const pages = document.querySelectorAll(
@@ -15,25 +16,34 @@ const insertCodeButton = () => {
   const btn = document.createElement("button");
   btn.addEventListener("click", displayCode);
   btn.textContent = "Code";
-  const navigation = document.querySelector('#hdtb[role="navigation"]');
-  navigation?.insertAdjacentElement("beforeend", btn);
+  btn.className = "gscv-btn";
+  const target = document.querySelector("#hdtb-msb > div:nth-child(2)");
+  target?.insertAdjacentElement("beforeend", btn);
 };
 
 const displayCode = () => {
-  const urls = getPageUrls().slice(0, 10);
-  urls.forEach((url) => {
-    chrome.runtime.sendMessage(
-      {
-        url,
-      },
-      (response) => {}
-    );
-  });
+  const gscv = document.querySelector(".gscv-wrapper");
+  if (gscv == null) {
+    const urls = getPageUrls().slice(0, 10);
+    urls.forEach((url) => {
+      chrome.runtime.sendMessage(
+        {
+          url,
+        },
+        (response) => {
+          console.log(response);
+        }
+      );
+    });
+  }
 };
 
 const main = async () => {
+  const config = await browser.storage.local.get(["trigger"]);
   insertCodeButton();
-  displayCode();
+  if (config.trigger === "always") {
+    displayCode();
+  }
 };
 
 main();
@@ -56,8 +66,10 @@ chrome.runtime.onMessage.addListener(
       ),
     ] as shiki.Lang[];
 
+    const config = await browser.storage.local.get(["theme"]);
+
     const highlighter = await shiki.getHighlighter({
-      theme: "dracula",
+      theme: config.theme,
       langs,
     });
 

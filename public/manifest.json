@@ -5,12 +5,13 @@
   "background": {
     "service_worker": "build/background.js"
   },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
+  },
   "content_scripts": [
     {
-      "matches": [
-        "https://*.google.com/search*",
-        "https://tsunagu.lightning.force.com/*"
-      ],
+      "matches": ["https://*.google.com/search*"],
       "js": ["build/content.js"],
       "css": ["build/content.css"]
     }
@@ -19,6 +20,6 @@
     "128": "icon-128.png"
   },
   "manifest_version": 3,
-  "permissions": ["tabs", "alarms"],
+  "permissions": ["tabs", "alarms", "storage"],
   "host_permissions": ["<all_urls>"]
 }
