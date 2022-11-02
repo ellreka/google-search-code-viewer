@@ -4,7 +4,7 @@ import browser from "webextension-polyfill";
 
 const getPageUrls = () => {
   const pages = document.querySelectorAll(
-    '#search .g .yuRUbf > a[href^="http"]:not(.fl):first-child'
+    '#search .g .yuRUbf > a[href^="http"]:not(.fl):first-child',
   );
   const urls = Array.from(pages)
     .map((el) => el.getAttribute("href"))
@@ -32,7 +32,7 @@ const displayCode = () => {
         },
         (response) => {
           console.log(response);
-        }
+        },
       );
     });
   }
@@ -60,9 +60,9 @@ chrome.runtime.onMessage.addListener(
           .filter((lang): lang is string => typeof lang === "string")
           .filter((lang) =>
             shiki.BUNDLED_LANGUAGES.find(
-              (l) => l.id === lang || l.aliases?.includes(lang)
-            )
-          )
+              (l) => l.id === lang || l.aliases?.includes(lang),
+            ),
+          ),
       ),
     ] as shiki.Lang[];
 
@@ -82,7 +82,7 @@ chrome.runtime.onMessage.addListener(
     });
 
     const pageTitleElement = document.querySelector(
-      `.g a[href="${url}"]`
+      `.g a[href="${url}"]`,
     )?.parentElement;
 
     if (codeHtmlList.length > 0 && pageTitleElement != null) {
@@ -100,8 +100,8 @@ chrome.runtime.onMessage.addListener(
             })
             .join("")}</div>
         </div>
-        `
+        `,
       );
     }
-  }
+  },
 );

@@ -73,7 +73,7 @@ chrome.runtime.onMessage.addListener(
       url: string;
     },
     sender,
-    sendResponse
+    sendResponse,
   ) => {
     if (sender.tab?.id == null) {
       return;
@@ -116,9 +116,9 @@ chrome.runtime.onMessage.addListener(
         url,
         codes: codeList,
       },
-      (response) => {}
+      (response) => {},
     );
-  }
+  },
 );
 
 export {};
