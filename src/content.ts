@@ -1,10 +1,10 @@
 import * as shiki from "shiki";
 import { MessageType } from "./types";
-import browser from "webextension-polyfill";
+import { getConfig } from "./utils";
 
 const getPageUrls = () => {
   const pages = document.querySelectorAll(
-    '#search .g .yuRUbf > a[href^="http"]:not(.fl):first-child',
+    '#search .g .yuRUbf > a[href^="http"]:not(.fl):first-child'
   );
   const urls = Array.from(pages)
     .map((el) => el.getAttribute("href"))
@@ -32,14 +32,17 @@ const displayCode = () => {
         },
         (response) => {
           console.log(response);
-        },
+        }
       );
     });
   }
 };
 
 const main = async () => {
-  const config = await browser.storage.local.get(["trigger"]);
+  const config = await getConfig();
+  if (config.isDebugMode) {
+    console.log(config);
+  }
   insertCodeButton();
   if (config.trigger === "always") {
     displayCode();
@@ -53,20 +56,22 @@ shiki.setCDN("https://unpkg.com/shiki/");
 chrome.runtime.onMessage.addListener(
   async (message: MessageType, sender, sendResponse) => {
     const { url, codes } = message;
+    const defaultLang = "javascript";
     const langs = [
-      ...new Set(
-        codes
+      ...new Set([
+        ...codes
           .map((c) => c.lang)
-          .filter((lang): lang is string => typeof lang === "string")
-          .filter((lang) =>
-            shiki.BUNDLED_LANGUAGES.find(
-              (l) => l.id === lang || l.aliases?.includes(lang),
-            ),
-          ),
-      ),
+          .filter((lang): lang is string => typeof lang === "string"),
+        defaultLang,
+      ]),
     ] as shiki.Lang[];
 
-    const config = await browser.storage.local.get(["theme"]);
+    const config = await getConfig();
+
+    if (config.isDebugMode) {
+      console.log(url);
+      console.table(codes)
+    }
 
     const highlighter = await shiki.getHighlighter({
       theme: config.theme,
@@ -76,13 +81,17 @@ chrome.runtime.onMessage.addListener(
     const bgColor = highlighter.getBackgroundColor();
     const codeHtmlList = codes.slice(0, 6).map((code) => {
       const html = highlighter.codeToHtml(code.html, {
-        lang: code.lang,
+        lang: code.lang
+          ? langs.includes(code.lang as unknown as shiki.Lang)
+            ? code.lang
+            : defaultLang
+          : defaultLang,
       });
       return html;
     });
 
     const pageTitleElement = document.querySelector(
-      `.g a[href="${url}"]`,
+      `.g a[href="${url}"]`
     )?.parentElement;
 
     if (codeHtmlList.length > 0 && pageTitleElement != null) {
@@ -100,8 +109,8 @@ chrome.runtime.onMessage.addListener(
             })
             .join("")}</div>
         </div>
-        `,
+        `
       );
     }
-  },
+  }
 );

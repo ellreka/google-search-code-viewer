@@ -1,75 +1,58 @@
 import { h, render } from "preact";
-import { useEffect, useState } from "preact/hooks";
+import { useEffect, useRef, useState } from "preact/hooks";
 import { BUNDLED_THEMES } from "shiki";
-import browser from "webextension-polyfill";
+import { TRIGGERS } from "./types";
+import { setConfig } from "./utils";
 
 const Options = () => {
   const [trigger, setTrigger] = useState("always");
   const [theme, setTheme] = useState("nord");
+  const [isDebugMode, setIsDebugMode] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const isFirst = useRef(true);
 
   useEffect(() => {
-    // Load options from storage
-    (async () => {
-      const config = await browser.storage.local.get();
-      console.log(config);
-      if (config?.trigger) {
-        setTrigger(config.trigger);
-      }
-      if (config?.theme) {
-        setTheme(config.theme);
-      }
-    })();
-  }, []);
-
-  const save = async () => {
-    setIsSaved(true);
-    setTimeout(() => setIsSaved(false), 1000);
-  };
-
-  const onChangeTheme: h.JSX.GenericEventHandler<HTMLSelectElement> = async (
-    e,
-  ) => {
-    const { value } = e.currentTarget;
-    setTheme(value);
-    await browser.storage.local.set({ theme: value });
-    save();
-  };
-
-  const onChangeTrigger: h.JSX.GenericEventHandler<HTMLSelectElement> = async (
-    e,
-  ) => {
-    const { value } = e.currentTarget;
-    setTrigger(value);
-    await browser.storage.local.set({ trigger: value });
-    save();
-  };
+    // Save options to storage
+    if (isFirst.current) {
+      isFirst.current = false;
+      return;
+    } else {
+      (async () => {
+        await setConfig({ trigger: trigger as any, theme, isDebugMode });
+        setIsSaved(true);
+        setTimeout(() => setIsSaved(false), 1000);
+      })();
+    }
+  }, [trigger, theme, isDebugMode]);
 
   return (
-    <div className="py-10 px-3 relative">
+    <div className="py-10 px-5 relative">
       {isSaved && (
         <div className="text-sm text-secondary absolute right-5 top-3">
           Saved!
         </div>
       )}
       <div className="flex flex-col gap-3">
-        <div className="form-control w-full max-w-xs">
+        <div className="form-control w-full">
           <label className="label cursor-pointer">
             <span className="label-text">Trigger</span>
           </label>
           <select
             className="select select-bordered select-sm"
             value={trigger}
-            onChange={onChangeTrigger}
+            onChange={(e) => {
+              const { value } = e.currentTarget;
+              setTrigger(value);
+            }}
           >
-            {["always", "button"].map((trigger) => (
+            {TRIGGERS.map((trigger) => (
               <option key={trigger} value={trigger}>
                 {trigger}
               </option>
             ))}
           </select>
         </div>
-        <div className="form-control w-full max-w-xs">
+        <div className="form-control w-full">
           <label className="label">
             <span className="label-text">Theme</span>
             <a
@@ -83,7 +66,10 @@ const Options = () => {
           <select
             className="select select-bordered select-sm"
             value={theme}
-            onChange={onChangeTheme}
+            onChange={(e) => {
+              const { value } = e.currentTarget;
+              setTheme(value);
+            }}
           >
             {BUNDLED_THEMES.map((theme) => (
               <option key={theme} value={theme}>
@@ -91,6 +77,17 @@ const Options = () => {
               </option>
             ))}
           </select>
+        </div>
+        <div className="form-control w-full">
+          <label className="label cursor-pointer">
+            <span className="label-text">Debug mode</span>
+            <input
+              type="checkbox"
+              checked={isDebugMode}
+              className="checkbox"
+              onChange={() => setIsDebugMode((prev) => !prev)}
+            />
+          </label>
         </div>
         {/* <div className="form-control w-full max-w-xs">
 					<label className="label">

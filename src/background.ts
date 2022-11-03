@@ -1,7 +1,7 @@
 import { load } from "cheerio";
 import Dexie from "dexie";
 import { Code } from "./types";
-import browser from "webextension-polyfill";
+import { getConfig, getLang, setConfig } from "./utils";
 
 const db = new Dexie("google-search-code-viewer");
 
@@ -42,12 +42,15 @@ const fetchPage = async (url: string) => {
 };
 
 const initializeStorage = async () => {
-  const config = await browser.storage.local.get();
+  const config = await getConfig();
   if (config?.trigger == null) {
-    await browser.storage.local.set({ trigger: "always" });
+    await setConfig({ trigger: "always" });
   }
   if (config?.theme == null) {
-    await browser.storage.local.set({ theme: "nord" });
+    await setConfig({ theme: "nord" });
+  }
+  if (config?.isDebugMode == null) {
+    await setConfig({ isDebugMode: false });
   }
 };
 
@@ -73,7 +76,7 @@ chrome.runtime.onMessage.addListener(
       url: string;
     },
     sender,
-    sendResponse,
+    sendResponse
   ) => {
     if (sender.tab?.id == null) {
       return;
@@ -87,7 +90,7 @@ chrome.runtime.onMessage.addListener(
       const text = await response.text();
 
       const $ = load(text);
-      const codes = $("pre > code")
+      const codes = $("pre code")
         .slice(0, 10)
         .map((i, el) => {
           const preClassNames = $(el).parent().attr("class")?.split(" ") ?? [];
@@ -98,7 +101,7 @@ chrome.runtime.onMessage.addListener(
             .find((c) => c.startsWith("language-") || c.startsWith("lang-"))
             ?.replace(/language-|lang-/, "");
           return {
-            lang,
+            lang: getLang(lang),
             html: $(el).text(),
           };
         })
@@ -116,9 +119,9 @@ chrome.runtime.onMessage.addListener(
         url,
         codes: codeList,
       },
-      (response) => {},
+      (response) => {}
     );
-  },
+  }
 );
 
 export {};
