@@ -9,6 +9,7 @@
     "build": "rimraf public/build && NODE_ENV=production node esbuild.js && pnpm run build:css",
     "dev:css": "tailwindcss -i ./src/popup.css -o ./public/build/popup.css --watch",
     "build:css": "tailwindcss -i ./src/popup.css -o ./public/build/popup.css --minify",
+    "build:zip": "pnpm build && zip -r build.zip public/",
     "fmt": "rome format ./src",
     "fmt:write": "rome format ./src --write"
   },
