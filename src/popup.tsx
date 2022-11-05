@@ -4,7 +4,7 @@ import { BUNDLED_THEMES } from "shiki";
 import { TRIGGERS, LAYOUTS } from "./types";
 import { getConfig, setConfig } from "./utils";
 
-const Options = () => {
+const Popup = () => {
   const [trigger, setTrigger] = useState<string>(TRIGGERS[0]);
   const [theme, setTheme] = useState("nord");
   const [layout, setLayout] = useState<string>(LAYOUTS[0]);
@@ -37,7 +37,8 @@ const Options = () => {
   }, [trigger, theme, layout, isDebugMode]);
 
   return (
-    <div className="py-10 px-5 relative">
+    <div className="p-5 relative">
+      <h1 className="text-lg font-bold">Settings</h1>
       {isSaved && (
         <div className="text-sm text-secondary absolute right-5 top-3">
           Saved!
@@ -123,4 +124,4 @@ const Options = () => {
   );
 };
 
-render(<Options />, document.body);
+render(<Popup />, document.body);

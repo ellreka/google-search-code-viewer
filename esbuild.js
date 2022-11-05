@@ -6,7 +6,7 @@ esbuild
       "./src/background.ts",
       "./src/content.ts",
       "./src/content.css",
-      "./src/options.tsx",
+      "./src/popup.tsx",
     ],
     bundle: true,
     minify: true,

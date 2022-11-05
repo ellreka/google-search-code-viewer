@@ -5,9 +5,8 @@
   "background": {
     "service_worker": "build/background.js"
   },
-  "options_ui": {
-    "page": "options.html",
-    "open_in_tab": false
+  "action": {
+    "default_popup": "popup.html"
   },
   "content_scripts": [
     {
