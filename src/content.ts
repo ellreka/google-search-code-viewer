@@ -29,7 +29,7 @@ const insertCodeButton = () => {
 const displayCode = () => {
   const gscv = document.querySelector(".gscv-wrapper");
   if (gscv == null) {
-    const urls = getPageUrls().slice(0, 10);
+    const urls = getPageUrls();
     urls.forEach((url) => {
       chrome.runtime.sendMessage(url, (response) => {});
     });
@@ -100,11 +100,11 @@ chrome.runtime.onMessage.addListener(
       return html;
     });
 
-    const pages = document.querySelectorAll(".g a[data-ved]");
-
+    const page = document.querySelector(`.g a[data-ved][href='${url}'`);
+    
     // pageDescriptionElement
-    const target = pages[index]
-      .closest("[data-sokoban-container]")
+    const target = page
+      ?.closest("[data-sokoban-container]")
       ?.querySelector("[data-content-feature='1']");
 
     if (codeHtmlList.length > 0 && target != null) {
