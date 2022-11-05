@@ -2,12 +2,17 @@ import * as shiki from "shiki";
 import { MessageType } from "./types";
 import { getConfig } from "./utils";
 
+const pageUrlQuery = "#search .g .yuRUbf > a[data-ved]";
+
 const getPageUrls = () => {
-  const pages = document.querySelectorAll(
-    '#search .g .yuRUbf > a[href^="http"]:not(.fl):first-child'
-  );
+  const pages = document.querySelectorAll(pageUrlQuery);
   const urls = Array.from(pages)
-    .map((el) => el.getAttribute("href"))
+    .map((el, index) => {
+      return {
+        index,
+        url: el.getAttribute("href"),
+      };
+    })
     .filter(Boolean);
   return urls;
 };
@@ -26,14 +31,7 @@ const displayCode = () => {
   if (gscv == null) {
     const urls = getPageUrls().slice(0, 10);
     urls.forEach((url) => {
-      chrome.runtime.sendMessage(
-        {
-          url,
-        },
-        (response) => {
-          console.log(response);
-        }
-      );
+      chrome.runtime.sendMessage(url, (response) => {});
     });
   }
 };
@@ -55,7 +53,7 @@ shiki.setCDN("https://unpkg.com/shiki/");
 
 chrome.runtime.onMessage.addListener(
   async (message: MessageType, sender, sendResponse) => {
-    const { url, codes } = message;
+    const { index, url, codes } = message;
     const defaultLang = "javascript";
     const langs = [
       ...new Set([
@@ -70,7 +68,7 @@ chrome.runtime.onMessage.addListener(
 
     if (config.isDebugMode) {
       console.log(url);
-      console.table(codes)
+      console.table(codes);
     }
 
     const highlighter = await shiki.getHighlighter({
@@ -79,7 +77,19 @@ chrome.runtime.onMessage.addListener(
     });
 
     const bgColor = highlighter.getBackgroundColor();
-    const codeHtmlList = codes.slice(0, 6).map((code) => {
+
+    const maxCodeLength = (() => {
+      switch (config.layout) {
+        case "two-rows":
+          return 4;
+        case "three-rows":
+          return 6;
+        default:
+          return 4;
+      }
+    })();
+
+    const codeHtmlList = codes.slice(0, maxCodeLength).map((code) => {
       const html = highlighter.codeToHtml(code.html, {
         lang: code.lang
           ? langs.includes(code.lang as unknown as shiki.Lang)
@@ -90,24 +100,29 @@ chrome.runtime.onMessage.addListener(
       return html;
     });
 
-    const pageTitleElement = document.querySelector(
-      `.g a[href="${url}"]`
-    )?.parentElement;
+    const pages = document.querySelectorAll(".g a[data-ved]");
 
-    if (codeHtmlList.length > 0 && pageTitleElement != null) {
-      pageTitleElement.insertAdjacentHTML(
+    // pageDescriptionElement
+    const target = pages[index]
+      .closest("[data-sokoban-container]")
+      ?.querySelector("[data-content-feature='1']");
+
+    if (codeHtmlList.length > 0 && target != null) {
+      target.insertAdjacentHTML(
         "beforeend",
         `
         <div class="gscv-wrapper">
-          <div class="gscv-container">${codeHtmlList
-            .map((code) => {
-              return `
+          <div class="gscv-container" data-gscv-layout="${
+            config.layout
+          }">${codeHtmlList
+          .map((code) => {
+            return `
               <div class="gscv-code" style="background-color:${bgColor};">
                 ${code}
               </div>
               `;
-            })
-            .join("")}</div>
+          })
+          .join("")}</div>
         </div>
         `
       );

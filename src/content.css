@@ -8,14 +8,14 @@
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 6px;
-  max-width: calc(200px * 5 + 10px * 4);
+  max-width: 100%;
   width: auto;
 }
 
-.gscv-container .gscv-code {
+.gscv-code {
   box-sizing: border-box;
-  width: calc((600px / 3) - 6px);
-  max-height: calc((600px / 3) - 6px);
+  width: calc((600px / 2) - 6px);
+  max-height: calc((600px / 2) - 6px);
   padding: 3px 5px;
   font-size: 15px;
   flex-shrink: 1;
@@ -23,6 +23,16 @@
   border-radius: 6px;
   height: auto;
   overflow: auto;
+}
+
+.gscv-container[data-gscv-layout="two-rows"] .gscv-code {
+  width: calc((600px / 2) - 6px);
+  max-height: calc((600px / 2) - 6px);
+}
+
+.gscv-container[data-gscv-layout="three-rows"] .gscv-code {
+  width: calc((600px / 3) - 6px);
+  max-height: calc((600px / 3) - 6px);
 }
 
 .gscv-container pre {
@@ -36,10 +46,27 @@
 
 .gscv-btn {
   background: none;
-  border: none;
-  padding: 0;
-  margin: 0;
-  cursor: pointer;
   color: inherit;
-  margin-left: 10px;
+  border: 1px solid transparent;
+  text-align: center;
+  border-radius: 2px;
+  line-height: 19px;
+  cursor: pointer;
+  padding: 4px 11px;
+  margin: 0 0 0 10px;
+}
+
+.gscv-btn:hover {
+  box-shadow: 0 1px 1px rgb(0 0 0 / 10%);
+  background-color: #f8f9fa;
+  background-image: -webkit-linear-gradient(top, #f8f9fa, #f8f9fa);
+  background-image: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    from(#f8f9fa),
+    to(#f8f9fa)
+  );
+  border: 1px solid #dadce0;
+  color: #202124;
 }

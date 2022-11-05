@@ -49,6 +49,9 @@ const initializeStorage = async () => {
   if (config?.theme == null) {
     await setConfig({ theme: "nord" });
   }
+  if (config?.layout == null) {
+    await setConfig({ layout: "two-rows" });
+  }
   if (config?.isDebugMode == null) {
     await setConfig({ isDebugMode: false });
   }
@@ -73,6 +76,7 @@ cache.toArray().then((res) => console.log(res));
 chrome.runtime.onMessage.addListener(
   async (
     message: {
+      index: number;
       url: string;
     },
     sender,
@@ -82,7 +86,7 @@ chrome.runtime.onMessage.addListener(
       return;
     }
     sendResponse("background");
-    const { url } = message;
+    const { url, index } = message;
     let codeList = [];
     const cacheCodes = (await cache.get(url))?.codes;
     if (cacheCodes == null || cacheCodes.length === 0) {
@@ -116,6 +120,7 @@ chrome.runtime.onMessage.addListener(
     chrome.tabs.sendMessage(
       sender.tab.id,
       {
+        index,
         url,
         codes: codeList,
       },

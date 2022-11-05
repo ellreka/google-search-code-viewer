@@ -1,29 +1,40 @@
 import { h, render } from "preact";
-import { useEffect, useRef, useState } from "preact/hooks";
+import { useEffect, useState } from "preact/hooks";
 import { BUNDLED_THEMES } from "shiki";
-import { TRIGGERS } from "./types";
-import { setConfig } from "./utils";
+import { TRIGGERS, LAYOUTS } from "./types";
+import { getConfig, setConfig } from "./utils";
 
 const Options = () => {
-  const [trigger, setTrigger] = useState("always");
+  const [trigger, setTrigger] = useState<string>(TRIGGERS[0]);
   const [theme, setTheme] = useState("nord");
+  const [layout, setLayout] = useState<string>(LAYOUTS[0]);
   const [isDebugMode, setIsDebugMode] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
-  const isFirst = useRef(true);
 
+  // Load options from storage
   useEffect(() => {
-    // Save options to storage
-    if (isFirst.current) {
-      isFirst.current = false;
-      return;
-    } else {
-      (async () => {
-        await setConfig({ trigger: trigger as any, theme, isDebugMode });
-        setIsSaved(true);
-        setTimeout(() => setIsSaved(false), 1000);
-      })();
-    }
-  }, [trigger, theme, isDebugMode]);
+    (async () => {
+      const config = await getConfig();
+      setTrigger(config.trigger);
+      setTheme(config.theme);
+      setLayout(config.layout);
+      setIsDebugMode(config.isDebugMode);
+    })();
+  }, []);
+
+  // Save options to storage
+  useEffect(() => {
+    (async () => {
+      await setConfig({
+        trigger: trigger as any,
+        theme,
+        layout: layout as any,
+        isDebugMode,
+      });
+      setIsSaved(true);
+      setTimeout(() => setIsSaved(false), 1000);
+    })();
+  }, [trigger, theme, layout, isDebugMode]);
 
   return (
     <div className="py-10 px-5 relative">
@@ -79,6 +90,24 @@ const Options = () => {
           </select>
         </div>
         <div className="form-control w-full">
+          <label className="label">
+            <span className="label-text">Layout</span>
+          </label>
+          <select
+            className="select select-bordered select-sm"
+            onChange={(e) => {
+              const { value } = e.currentTarget;
+              setLayout(value);
+            }}
+          >
+            {LAYOUTS.map((layout) => (
+              <option key={layout} value={layout}>
+                {layout}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="form-control w-full">
           <label className="label cursor-pointer">
             <span className="label-text">Debug mode</span>
             <input
@@ -89,14 +118,6 @@ const Options = () => {
             />
           </label>
         </div>
-        {/* <div className="form-control w-full max-w-xs">
-					<label className="label">
-						<span className="label-text">Layout</span>
-					</label>
-					<select className="select select-bordered select-sm">
-						<option value="">Layout1</option>
-					</select>
-				</div> */}
       </div>
     </div>
   );
