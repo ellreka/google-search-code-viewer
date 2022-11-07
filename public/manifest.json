@@ -19,6 +19,6 @@
     "128": "icon-128.png"
   },
   "manifest_version": 3,
-  "permissions": ["tabs", "alarms", "storage"],
+  "permissions": ["alarms", "storage"],
   "host_permissions": ["<all_urls>"]
 }
