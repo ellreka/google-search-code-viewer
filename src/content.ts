@@ -20,9 +20,9 @@ const getPageUrls = () => {
 const insertCodeButton = () => {
   const btn = document.createElement("button");
   btn.addEventListener("click", displayCode);
-  btn.textContent = "Code";
+  btn.textContent = "gscv";
   btn.className = "gscv-btn";
-  const target = document.querySelector("#hdtb-msb > div:nth-child(2)");
+  const target = document.querySelector("#result-stats")?.parentElement;
   target?.insertAdjacentElement("beforeend", btn);
 };
 
@@ -41,7 +41,9 @@ const main = async () => {
   if (config.isDebugMode) {
     console.log(config);
   }
-  insertCodeButton();
+  if (config.trigger === "click") {
+    insertCodeButton();
+  }
   if (config.trigger === "always") {
     displayCode();
   }
@@ -101,12 +103,7 @@ chrome.runtime.onMessage.addListener(
     });
 
     const page = document.querySelector(`.g a[data-ved][href='${url}'`);
-    
-    // pageDescriptionElement
-    const target = page
-      ?.closest("[data-sokoban-container]")
-      ?.querySelector("[data-content-feature='1']");
-
+    const target = page?.parentElement;
     if (codeHtmlList.length > 0 && target != null) {
       target.insertAdjacentHTML(
         "beforeend",
