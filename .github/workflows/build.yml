@@ -16,7 +16,7 @@ jobs:
           node-version: "16"
       - uses: pnpm/action-setup@v2
         with:
-          version: 7.13.4
+          version: 8.6.7
       - name: Install Dependencies
         run: pnpm i --frozen-lockfile
       - name: Build
