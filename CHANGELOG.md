@@ -1,5 +1,9 @@
 # Changelog
 
+## [v1.0.0](https://github.com/ellreka/google-search-code-viewer/compare/v0.0.3...v1.0.0) - 2024-09-26
+### Changed
+- Feat/v1.0.0 by @ellreka in https://github.com/ellreka/google-search-code-viewer/pull/8
+
 ## [v0.0.3](https://github.com/ellreka/google-search-code-viewer/compare/v0.0.2...v0.0.3) - 2023-07-11
 ### Fixed
 - fix: fix pnpm version by @ellreka in https://github.com/ellreka/google-search-code-viewer/pull/6
