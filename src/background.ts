@@ -1,6 +1,6 @@
 import { load } from "cheerio";
 import Dexie from "dexie";
-import { Code } from "./types";
+import { type Code, LAYOUTS } from "./types";
 import { getConfig, getLang, setConfig } from "./utils";
 
 const db = new Dexie("google-search-code-viewer");
@@ -49,8 +49,8 @@ const initializeStorage = async () => {
   if (config?.theme == null) {
     await setConfig({ theme: "nord" });
   }
-  if (config?.layout == null) {
-    await setConfig({ layout: "two-rows" });
+  if (config?.layout == null || !LAYOUTS.includes(config.layout)) {
+    await setConfig({ layout: "2cols-2rows" });
   }
   if (config?.isDebugMode == null) {
     await setConfig({ isDebugMode: false });
@@ -69,7 +69,10 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
 });
 
 // Initialize storage
-initializeStorage();
+chrome.runtime.onInstalled.addListener(async (details) => {
+  console.log("onInstalled", details);
+  await initializeStorage();
+});
 
 cache.toArray().then((res) => console.log(res));
 
@@ -80,12 +83,12 @@ chrome.runtime.onMessage.addListener(
       url: string;
     },
     sender,
-    sendResponse
+    sendResponse,
   ) => {
+    sendResponse("background");
     if (sender.tab?.id == null) {
       return;
     }
-    sendResponse("background");
     const { url, index } = message;
     let codeList = [];
     const cacheCodes = (await cache.get(url))?.codes;
@@ -124,9 +127,7 @@ chrome.runtime.onMessage.addListener(
         url,
         codes: codeList,
       },
-      (response) => {}
+      (_response) => {},
     );
-  }
+  },
 );
-
-export {};

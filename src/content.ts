@@ -1,8 +1,8 @@
 import * as shiki from "shiki";
-import { MessageType } from "./types";
+import type { MessageType } from "./types";
 import { getConfig } from "./utils";
 
-const pageUrlQuery = "#search .g .yuRUbf > a[data-ved]";
+const pageUrlQuery = "#search .g .yuRUbf a[data-ved]";
 
 const getPageUrls = () => {
   const pages = document.querySelectorAll(pageUrlQuery);
@@ -22,17 +22,17 @@ const insertCodeButton = () => {
   btn.addEventListener("click", displayCode);
   btn.textContent = "gscv";
   btn.className = "gscv-btn";
-  const target = document.querySelector("#result-stats")?.parentElement;
-  target?.insertAdjacentElement("beforeend", btn);
+  const toolsBtn = document.querySelector("#hdtb-tls");
+  toolsBtn?.insertAdjacentElement("afterend", btn);
 };
 
 const displayCode = () => {
   const gscv = document.querySelector(".gscv-wrapper");
   if (gscv == null) {
     const urls = getPageUrls();
-    urls.forEach((url) => {
-      chrome.runtime.sendMessage(url, (response) => {});
-    });
+    for (const url of urls) {
+      chrome.runtime.sendMessage(url, (_response) => {});
+    }
   }
 };
 
@@ -51,10 +51,9 @@ const main = async () => {
 
 main();
 
-shiki.setCDN("https://unpkg.com/shiki/");
-
 chrome.runtime.onMessage.addListener(
-  async (message: MessageType, sender, sendResponse) => {
+  async (message: MessageType, _sender, sendResponse) => {
+    sendResponse("content");
     const { index, url, codes } = message;
     const defaultLang = "javascript";
     const langs = [
@@ -64,7 +63,7 @@ chrome.runtime.onMessage.addListener(
           .filter((lang): lang is string => typeof lang === "string"),
         defaultLang,
       ]),
-    ] as shiki.Lang[];
+    ];
 
     const config = await getConfig();
 
@@ -73,28 +72,33 @@ chrome.runtime.onMessage.addListener(
       console.table(codes);
     }
 
-    const highlighter = await shiki.getHighlighter({
-      theme: config.theme,
+    const highlighter = await shiki.getSingletonHighlighter({
+      themes: [config.theme],
       langs,
     });
 
-    const bgColor = highlighter.getBackgroundColor();
+    const bgColor = highlighter.getTheme(config.theme).bg;
 
     const maxCodeLength = (() => {
       switch (config.layout) {
-        case "two-rows":
+        case "2cols-1rows":
+          return 2;
+        case "3cols-1rows":
+          return 3;
+        case "2cols-2rows":
           return 4;
-        case "three-rows":
+        case "3cols-2rows":
           return 6;
         default:
-          return 4;
+          throw new Error(config.layout satisfies never);
       }
     })();
 
     const codeHtmlList = codes.slice(0, maxCodeLength).map((code) => {
       const html = highlighter.codeToHtml(code.html, {
+        theme: config.theme,
         lang: code.lang
-          ? langs.includes(code.lang as unknown as shiki.Lang)
+          ? langs.includes(code.lang)
             ? code.lang
             : defaultLang
           : defaultLang,
@@ -112,17 +116,17 @@ chrome.runtime.onMessage.addListener(
           <div class="gscv-container" data-gscv-layout="${
             config.layout
           }">${codeHtmlList
-          .map((code) => {
-            return `
+            .map((code) => {
+              return `
               <div class="gscv-code" style="background-color:${bgColor};">
                 ${code}
               </div>
               `;
-          })
-          .join("")}</div>
+            })
+            .join("")}</div>
         </div>
-        `
+        `,
       );
     }
-  }
+  },
 );
