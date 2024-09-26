@@ -81,12 +81,16 @@ chrome.runtime.onMessage.addListener(
 
     const maxCodeLength = (() => {
       switch (config.layout) {
-        case "two-rows":
+        case "2cols-1rows":
+          return 2;
+        case "3cols-1rows":
+          return 3;
+        case "2cols-2rows":
           return 4;
-        case "three-rows":
+        case "3cols-2rows":
           return 6;
         default:
-          return 4;
+          throw new Error(config.layout satisfies never);
       }
     })();
 

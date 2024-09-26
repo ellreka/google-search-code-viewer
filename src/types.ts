@@ -11,7 +11,12 @@ export type MessageType = {
 
 export const TRIGGERS = ["always", "click"] as const;
 
-export const LAYOUTS = ["two-rows", "three-rows"] as const;
+export const LAYOUTS = [
+  "2cols-2rows",
+  "2cols-1rows",
+  "3cols-2rows",
+  "3cols-1rows",
+] as const;
 
 export type Config = {
   trigger: (typeof TRIGGERS)[number];
