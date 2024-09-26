@@ -102,6 +102,7 @@ const Popup = () => {
           <select
             id="layout"
             className="select select-bordered select-sm"
+            value={layout}
             onChange={(e) => {
               const { value } = e.currentTarget;
               setLayout(value as (typeof LAYOUTS)[number]);
