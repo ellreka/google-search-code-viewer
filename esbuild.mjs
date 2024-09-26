@@ -16,4 +16,9 @@ const context = await esbuild.context({
   },
 });
 
-await context.watch();
+if (process.argv.includes("--watch")) {
+  await context.watch();
+} else {
+  await context.rebuild();
+  context.dispose();
+}
