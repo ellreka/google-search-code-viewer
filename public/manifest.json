@@ -1,6 +1,6 @@
 {
   "name": "Google Search Code Viewer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Display code within each page in Google search results",
   "background": {
     "service_worker": "build/background.js"
