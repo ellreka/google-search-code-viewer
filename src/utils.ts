@@ -1,4 +1,4 @@
-import { BUNDLED_LANGUAGES } from "shiki";
+import { bundledLanguages } from "shiki/langs";
 import browser from "webextension-polyfill";
 import { Config } from "./types";
 
@@ -9,17 +9,13 @@ export const getConfig = async () => {
 
 export const setConfig = async (config: Partial<Config>) => {
   await browser.storage.local.set(config);
-}
+};
 
 export const getLang = (lang: string | undefined) => {
   if (lang == null) {
     return undefined;
   }
-  if (
-    BUNDLED_LANGUAGES.some(
-      (l) => l.id === lang || l.aliases?.includes(lang)
-    )
-  ) {
+  if (Object.keys(bundledLanguages).includes(lang)) {
     return lang;
   }
 };

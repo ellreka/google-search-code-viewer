@@ -2,7 +2,7 @@ import * as shiki from "shiki";
 import { MessageType } from "./types";
 import { getConfig } from "./utils";
 
-const pageUrlQuery = "#search .g .yuRUbf > a[data-ved]";
+const pageUrlQuery = "#search .g .yuRUbf a[data-ved]";
 
 const getPageUrls = () => {
   const pages = document.querySelectorAll(pageUrlQuery);
@@ -51,8 +51,6 @@ const main = async () => {
 
 main();
 
-shiki.setCDN("https://unpkg.com/shiki/");
-
 chrome.runtime.onMessage.addListener(
   async (message: MessageType, sender, sendResponse) => {
     const { index, url, codes } = message;
@@ -64,7 +62,7 @@ chrome.runtime.onMessage.addListener(
           .filter((lang): lang is string => typeof lang === "string"),
         defaultLang,
       ]),
-    ] as shiki.Lang[];
+    ];
 
     const config = await getConfig();
 
@@ -73,12 +71,12 @@ chrome.runtime.onMessage.addListener(
       console.table(codes);
     }
 
-    const highlighter = await shiki.getHighlighter({
-      theme: config.theme,
+    const highlighter = await shiki.createHighlighter({
+      themes: [config.theme],
       langs,
     });
 
-    const bgColor = highlighter.getBackgroundColor();
+    const bgColor = highlighter.getTheme(config.theme).bg;
 
     const maxCodeLength = (() => {
       switch (config.layout) {
@@ -93,8 +91,9 @@ chrome.runtime.onMessage.addListener(
 
     const codeHtmlList = codes.slice(0, maxCodeLength).map((code) => {
       const html = highlighter.codeToHtml(code.html, {
+        theme: config.theme,
         lang: code.lang
-          ? langs.includes(code.lang as unknown as shiki.Lang)
+          ? langs.includes(code.lang)
             ? code.lang
             : defaultLang
           : defaultLang,

@@ -1,6 +1,6 @@
 import { h, render } from "preact";
 import { useEffect, useState } from "preact/hooks";
-import { BUNDLED_THEMES } from "shiki";
+import { bundledThemes } from "shiki/themes";
 import { TRIGGERS, LAYOUTS } from "./types";
 import { getConfig, setConfig } from "./utils";
 
@@ -83,7 +83,7 @@ const Popup = () => {
               setTheme(value);
             }}
           >
-            {BUNDLED_THEMES.map((theme) => (
+            {Object.keys(bundledThemes).map((theme) => (
               <option key={theme} value={theme}>
                 {theme}
               </option>
