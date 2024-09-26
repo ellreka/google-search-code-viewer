@@ -1,6 +1,6 @@
 import { bundledLanguages } from "shiki/langs";
 import browser from "webextension-polyfill";
-import { Config } from "./types";
+import type { Config } from "./types";
 
 export const getConfig = async () => {
   const config = await browser.storage.local.get();

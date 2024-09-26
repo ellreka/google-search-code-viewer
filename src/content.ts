@@ -1,5 +1,5 @@
 import * as shiki from "shiki";
-import { MessageType } from "./types";
+import type { MessageType } from "./types";
 import { getConfig } from "./utils";
 
 const pageUrlQuery = "#search .g .yuRUbf a[data-ved]";
@@ -30,9 +30,9 @@ const displayCode = () => {
   const gscv = document.querySelector(".gscv-wrapper");
   if (gscv == null) {
     const urls = getPageUrls();
-    urls.forEach((url) => {
-      chrome.runtime.sendMessage(url, (response) => {});
-    });
+    for (const url of urls) {
+      chrome.runtime.sendMessage(url, (_response) => {});
+    }
   }
 };
 
@@ -111,17 +111,17 @@ chrome.runtime.onMessage.addListener(
           <div class="gscv-container" data-gscv-layout="${
             config.layout
           }">${codeHtmlList
-          .map((code) => {
-            return `
+            .map((code) => {
+              return `
               <div class="gscv-code" style="background-color:${bgColor};">
                 ${code}
               </div>
               `;
-          })
-          .join("")}</div>
+            })
+            .join("")}</div>
         </div>
-        `
+        `,
       );
     }
-  }
+  },
 );

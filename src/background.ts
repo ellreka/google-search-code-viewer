@@ -1,6 +1,6 @@
 import { load } from "cheerio";
 import Dexie from "dexie";
-import { Code } from "./types";
+import type { Code } from "./types";
 import { getConfig, getLang, setConfig } from "./utils";
 
 const db = new Dexie("google-search-code-viewer");
@@ -80,7 +80,7 @@ chrome.runtime.onMessage.addListener(
       url: string;
     },
     sender,
-    sendResponse
+    sendResponse,
   ) => {
     if (sender.tab?.id == null) {
       return;
@@ -124,9 +124,7 @@ chrome.runtime.onMessage.addListener(
         url,
         codes: codeList,
       },
-      (response) => {}
+      (response) => {},
     );
-  }
+  },
 );
-
-export {};

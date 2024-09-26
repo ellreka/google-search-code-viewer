@@ -14,8 +14,8 @@ export const TRIGGERS = ["always", "click"] as const;
 export const LAYOUTS = ["two-rows", "three-rows"] as const;
 
 export type Config = {
-  trigger: typeof TRIGGERS[number];
+  trigger: (typeof TRIGGERS)[number];
   theme: string;
-  layout: typeof LAYOUTS[number];
+  layout: (typeof LAYOUTS)[number];
   isDebugMode: boolean;
 };
