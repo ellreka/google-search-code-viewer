@@ -49,13 +49,15 @@
 .gscv-btn {
   background: none;
   color: inherit;
-  border: 1px solid transparent;
+  border: 1px solid;
   text-align: center;
-  border-radius: 2px;
+  border-radius: 999px;
   cursor: pointer;
-  padding: 0 11px;
+  padding: 2px 11px;
+  margin: 0 0 0 20px;
 }
 
 .gscv-btn:hover {
   text-decoration: underline;
+  background-color: #303134;
 }

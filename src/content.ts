@@ -22,8 +22,8 @@ const insertCodeButton = () => {
   btn.addEventListener("click", displayCode);
   btn.textContent = "gscv";
   btn.className = "gscv-btn";
-  const target = document.querySelector("#result-stats")?.parentElement;
-  target?.insertAdjacentElement("beforeend", btn);
+  const toolsBtn = document.querySelector("#hdtb-tls");
+  toolsBtn?.insertAdjacentElement("afterend", btn);
 };
 
 const displayCode = () => {
