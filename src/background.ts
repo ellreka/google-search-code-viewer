@@ -82,10 +82,10 @@ chrome.runtime.onMessage.addListener(
     sender,
     sendResponse,
   ) => {
+    sendResponse("background");
     if (sender.tab?.id == null) {
       return;
     }
-    sendResponse("background");
     const { url, index } = message;
     let codeList = [];
     const cacheCodes = (await cache.get(url))?.codes;
@@ -124,7 +124,7 @@ chrome.runtime.onMessage.addListener(
         url,
         codes: codeList,
       },
-      (response) => {},
+      (_response) => {},
     );
   },
 );

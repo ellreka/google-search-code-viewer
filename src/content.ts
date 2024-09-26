@@ -52,7 +52,8 @@ const main = async () => {
 main();
 
 chrome.runtime.onMessage.addListener(
-  async (message: MessageType, sender, sendResponse) => {
+  async (message: MessageType, _sender, sendResponse) => {
+    sendResponse("content");
     const { index, url, codes } = message;
     const defaultLang = "javascript";
     const langs = [
