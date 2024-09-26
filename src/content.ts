@@ -71,7 +71,7 @@ chrome.runtime.onMessage.addListener(
       console.table(codes);
     }
 
-    const highlighter = await shiki.createHighlighter({
+    const highlighter = await shiki.getSingletonHighlighter({
       themes: [config.theme],
       langs,
     });
