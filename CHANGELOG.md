@@ -1,5 +1,7 @@
 # Changelog
 
+## [v1.0.1](https://github.com/ellreka/google-search-code-viewer/compare/v1.0.0...v1.0.1) - 2024-09-26
+
 ## [v1.0.0](https://github.com/ellreka/google-search-code-viewer/compare/v0.0.3...v1.0.0) - 2024-09-26
 ### Changed
 - Feat/v1.0.0 by @ellreka in https://github.com/ellreka/google-search-code-viewer/pull/8
